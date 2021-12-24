@@ -7,14 +7,14 @@ use chrono::prelude::*;
 use super::{AuthBlacklist, Authorization};
 use crate::api::user;
 
-// 添加日志
+// Add log
 pub async fn insert_log(log_type: i16, msg: &str, user_id: i32, auth_id: i32, client: &ClientInfo, state: &web::Data<AppState>) -> Result<(), error::Error> {
     model::insert_log(log_type, msg, user_id, auth_id, client, Utc::now(), &state.db, &state.log).await?;
     
     Ok(())
 }
 
-// 将用户登录的token加入黑名单
+// Add the user's login token to the blacklist
 pub async fn add_black_list(auth_black_list: &AuthBlacklist, state: &web::Data<AppState>) -> Result<(), error::Error> {
     let task1 = model::insert_auth_black_list(&auth_black_list, &state.db, &state.log);
     let mut hold: Vec<BoxFuture<_>> = vec![Box::pin(task1)];
@@ -36,14 +36,14 @@ pub async fn add_black_list(auth_black_list: &AuthBlacklist, state: &web::Data<A
     Ok(())
 }
 
-// 检查id是否在黑名单中
+// Check if the id is in the blacklist
 pub async fn is_in_black_list(id: &String, state: &web::Data<AppState>) -> Result<bool, error::Error> {
     let result = lib::redis::has_key(format!("auth_black_list_{}", id), &state.redis, &state.log).await?;
 
     Ok(result)
 }
 
-// 创建授权
+// Create authorization
 pub async fn create_auth(authorization: &Authorization, client: &ClientInfo, state: &web::Data<AppState>) -> Result<i32, error::Error> {
     let result = model::insert_auth(authorization, &state.db, &state.log).await?;
     if let Some(user_id) = authorization.user_id {
@@ -56,21 +56,21 @@ pub async fn create_auth(authorization: &Authorization, client: &ClientInfo, sta
     Ok(0)
 }
 
-// 撤销授权
+// Revoke authorization
 pub async fn revoke_auth(id: i32, state: &web::Data<AppState>) -> Result<(), error::Error> {
     model::disable_auth(id, &state.db, &state.log).await?;
 
     Ok(())
 }
 
-// 通过id获取授权信息
+// Obtain authorization information by id
 pub async fn get_by_id(id: i32, state: &web::Data<AppState>) -> Result<Option<Authorization>, error::Error> {
     let result = model::get_by_id(id, &state.db, &state.log).await?;
 
     Ok(result)
 }
 
-// 通过uuid获取授权信息
+// Obtain authorization information through uuid
 pub async fn get_by_uuid(uuid: &str, state: &web::Data<AppState>) -> Result<Option<Authorization>, error::Error> {
     let uid = match uuid::Uuid::parse_str(uuid) {
         Err(_) => return Err(error::new(100403, "Authentication failure", 401)),
@@ -82,7 +82,7 @@ pub async fn get_by_uuid(uuid: &str, state: &web::Data<AppState>) -> Result<Opti
     Ok(result)
 }
 
-// 更新授权
+// Update authorization
 pub async fn update_auth(authorization: &Authorization, state: &web::Data<AppState>) -> Result<Authorization, error::Error> {
     let result = model::update_auth(authorization, &state.db, &state.log).await?;
 

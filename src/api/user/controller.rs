@@ -12,7 +12,7 @@ pub async fn get_info(req: HttpRequest, state: web::Data<AppState>) -> Result<we
     let auth_info = auth::verify("ROLE_MEMBER", &req, &state).await?;
 
     let user_data = match service::get_user_info_by_id(auth_info.id, &state).await? {
-        None => return Err(error::new(400007, "无法获得用户信息", 422)),
+        None => return Err(error::new(400007, "Unable to obtain user information", 422)),
         Some(v) => v
     };
 
@@ -30,16 +30,16 @@ pub struct ChangePasswordReqJson {
 pub async fn change_password(req_info: web::Json<ChangePasswordReqJson>, req: HttpRequest, state: web::Data<AppState>, conn: ConnectionInfo) -> Result<web::HttpResponse, error::Error> {
     let auth_info = auth::verify("ROLE_MEMBER", &req, &state).await?;
 
-    let old_password = validator::required_str(&req_info.old_password, "原密码")?;
-    let new_password = validator::required_str(&req_info.new_password, "新密码")?;
-    let confirm_password = validator::required_str(&req_info.confirm_password, "确认密码")?;
+    let old_password = validator::required_str(&req_info.old_password, "old password")?;
+    let new_password = validator::required_str(&req_info.new_password, "new password")?;
+    let confirm_password = validator::required_str(&req_info.confirm_password, "confirm password")?;
 
     if new_password != confirm_password {
-        return Err(error::new(100301, "新密码和确认密码不一致", 422));
+        return Err(error::new(100301, "The new password and the confirmed password are inconsistent", 422));
     }
 
     let user_data = match service::get_by_id(auth_info.id, &state).await? {
-        None => return Err(error::new(400007, "无法获得用户信息", 422)),
+        None => return Err(error::new(400007, "Unable to obtain user information", 422)),
         Some(v) => v
     };
 
@@ -75,7 +75,7 @@ pub async fn change_password(req_info: web::Json<ChangePasswordReqJson>, req: Ht
 
     let old_pwd = auth::crypt_password(&old_password, &old_salt);
     if old_pwd != old_password_store {
-        return Err(error::new(100407, "原密码错误", 422));
+        return Err(error::new(100407, "error old password", 422));
     }
 
     let salt = auth::salt();

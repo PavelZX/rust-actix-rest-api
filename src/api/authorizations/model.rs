@@ -2,7 +2,7 @@ use crate::lib::{client::ClientInfo, error};
 use chrono::{DateTime, Utc};
 use super::{AuthBlacklist, Authorization};
 
-// 添加日志
+// Add log
 pub async fn insert_log(log_type: i16, msg: &str, user_id: i32, auth_id: i32, client: &ClientInfo, log_time: DateTime<Utc>, db: &sqlx::Pool<sqlx::Postgres>, log: &slog::Logger) -> Result<(), error::Error> {
     let r = sqlx::query(r#"
         INSERT INTO authorizations_logs (user_id, log_type, ip, log_time, client_type, auth_id, log, user_agent)
@@ -26,7 +26,7 @@ pub async fn insert_log(log_type: i16, msg: &str, user_id: i32, auth_id: i32, cl
     Ok(())
 }
 
-// 将用户登录的token加入黑名单
+// Add the user's login token to the blacklist
 pub async fn insert_auth_black_list(auth_black_list: &AuthBlacklist, db: &sqlx::Pool<sqlx::Postgres>, log: &slog::Logger) -> Result<(), error::Error> {
     let r = sqlx::query(r#"
         INSERT INTO authorizations_blacklist (access_token_id, access_token_exp, user_id)
@@ -45,7 +45,7 @@ pub async fn insert_auth_black_list(auth_black_list: &AuthBlacklist, db: &sqlx::
     Ok(())
 }
 
-// 插入授权
+// Insert authorization
 pub async fn insert_auth(authorization: &Authorization, db: &sqlx::Pool<sqlx::Postgres>, log: &slog::Logger) -> Result<Authorization, error::Error> {
     let r = sqlx::query_as::<_, Authorization>(r#"
         INSERT INTO authorizations (user_id, uuid, client_type, refresh_token, create_time, access_token_id, access_token_exp, access_token_iat, is_enabled)
@@ -73,7 +73,7 @@ pub async fn insert_auth(authorization: &Authorization, db: &sqlx::Pool<sqlx::Po
 }
 
 
-// 禁用授权
+// Disable authorization
 pub async fn disable_auth(id: i32, db: &sqlx::Pool<sqlx::Postgres>, log: &slog::Logger) -> Result<(), error::Error> {
     let r = sqlx::query("UPDATE authorizations SET is_enabled=0, update_time=$1 WHERE id=$2")
         .bind(Utc::now())
@@ -89,7 +89,7 @@ pub async fn disable_auth(id: i32, db: &sqlx::Pool<sqlx::Postgres>, log: &slog::
     Ok(())
 }
 
-// 通过id获取授权信息
+// Obtain authorization information by id
 pub async fn get_by_id(id: i32, db: &sqlx::Pool<sqlx::Postgres>, log: &slog::Logger) -> Result<Option<Authorization>, error::Error> {
     let r = sqlx::query_as::<_, Authorization>(r#"
         SELECT a.*
@@ -108,7 +108,7 @@ pub async fn get_by_id(id: i32, db: &sqlx::Pool<sqlx::Postgres>, log: &slog::Log
     }
 }
 
-// 通过uuid获取授权信息
+// Obtain authorization information through uuid
 pub async fn get_by_uuid(uuid: uuid::Uuid, db: &sqlx::Pool<sqlx::Postgres>, log: &slog::Logger) -> Result<Option<Authorization>, error::Error> {
     let r = sqlx::query_as::<_, Authorization>("SELECT * FROM authorizations WHERE uuid=$1")
         .bind(uuid)
@@ -124,7 +124,7 @@ pub async fn get_by_uuid(uuid: uuid::Uuid, db: &sqlx::Pool<sqlx::Postgres>, log:
     }
 }
 
-// 更新授权
+// Update authorization
 pub async fn update_auth(authorization: &Authorization, db: &sqlx::Pool<sqlx::Postgres>, log: &slog::Logger) -> Result<Authorization, error::Error> {
     let id = match authorization.id {
         Some(v) => v,

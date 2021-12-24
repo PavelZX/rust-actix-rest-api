@@ -54,7 +54,7 @@ pub async fn conn(settings: &config::Config) -> Pool<RedisConnectionManager> {
     pool
 }
 
-// 设置过期时间（秒）
+// Set expiration time (seconds)
 pub async fn expire(key: String, value: i64, pool: &mobc::Pool<RedisConnectionManager>, log: &slog::Logger)  -> Result<(), error::Error> {
     let mut con = pool.get().await.unwrap();
     let result = redis::cmd("EXPIRE").arg(key).arg(value).query_async::<_, i16>(&mut con as &mut redis::aio::Connection).await;
@@ -66,7 +66,7 @@ pub async fn expire(key: String, value: i64, pool: &mobc::Pool<RedisConnectionMa
     Ok(())
 }
 
-// 获取某key的过期时间(秒)
+// Get the expiration time of a key (seconds)
 pub async fn get_expire(key: String, pool: &mobc::Pool<RedisConnectionManager>, log: &slog::Logger)  -> Result<i64, error::Error> {
     let mut con = pool.get().await.unwrap();
     let result = redis::cmd("TTL").arg(key).query_async::<_, i64>(&mut con as &mut redis::aio::Connection).await;

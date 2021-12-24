@@ -23,11 +23,11 @@ struct ResTokenJson {
     updated_at: String,
 }
 
-// 创建授权
+// Create authorization
 #[post("/authorizations")]
 pub async fn create_auth(req_info: web::Json<CreateAuthReqJson>, state: web::Data<AppState>, req: HttpRequest, conn: ConnectionInfo) -> Result<web::HttpResponse, error::Error> {
-    let username = validator::required_str(&req_info.username, "用户名")?;
-    let password = validator::required_str(&req_info.password, "密码")?;
+    let username = validator::required_str(&req_info.username, "username")?;
+    let password = validator::required_str(&req_info.password, "password")?;
 
     let client = client::get_client_info(&state, &req, &conn);
 
@@ -35,51 +35,51 @@ pub async fn create_auth(req_info: web::Json<CreateAuthReqJson>, state: web::Dat
     let u = match result {
         None => {
             service::insert_log(1003, &username, 0, 0, &client, &state).await?;
-            return Err(error::new(100400, "帐号或密码不正确", 422));
+            return Err(error::new(100400, "Incorrect account or password", 422));
         },
         Some(v) => v
     };
 
     let user_id = match u.id {
-        None => return Err(error::new(100400, "帐号或密码不正确", 422)),
+        None => return Err(error::new(100400, "Incorrect account or password", 422)),
         Some(v) => v,
     };
 
     let user_type = match u.user_type {
-        None => return Err(error::new(100400, "帐号或密码不正确", 422)),
+        None => return Err(error::new(100400, "Incorrect account or password", 422)),
         Some(v) => v,
     };
 
     let is_del = match u.is_del {
-        None => return Err(error::new(100400, "帐号或密码不正确", 422)),
+        None => return Err(error::new(100400, "Incorrect account or password", 422)),
         Some(v) => v,
     };
     if is_del != 0 {
         service::insert_log(1004, "", user_id, 0, &client, &state).await?;
-        return Err(error::new(100400, "帐号或密码不正确", 422));
+        return Err(error::new(100400, "Incorrect account or password", 422));
     }
 
     let is_enabled = match u.is_enabled {
-        None => return Err(error::new(100400, "帐号或密码不正确", 422)),
+        None => return Err(error::new(100400, "Incorrect account or password", 422)),
         Some(v) => v,
     };
     if is_enabled != 1 {
         service::insert_log(1002, "", user_id, 0, &client, &state).await?;
-        return Err(error::new(100400, "帐号或密码不正确", 422));
+        return Err(error::new(100400, "Incorrect account or password", 422));
     }
 
     let user_password = match u.password {
-        None => return Err(error::new(100400, "帐号或密码不正确", 422)),
+        None => return Err(error::new(100400, "Incorrect account or password", 422)),
         Some(v) => v,
     };
     let salt = match u.salt {
-        None => return Err(error::new(100400, "帐号或密码不正确", 422)),
+        None => return Err(error::new(100400, "Incorrect account or password", 422)),
         Some(v) => v,
     };
     let pwd = auth::crypt_password(&password, &salt);
     if user_password != pwd {
         service::insert_log(1001, "", user_id, 0, &client, &state).await?;
-        return Err(error::new(100400, "帐号或密码不正确", 422));
+        return Err(error::new(100400, "Incorrect account or password", 422));
     }
 
     let auth = auth::create_auth(user_id, user_type, &client, &state).await?;
@@ -95,11 +95,11 @@ pub async fn create_auth(req_info: web::Json<CreateAuthReqJson>, state: web::Dat
     }))
 }
 
-// 刷新授权
+// Refresh authorization
 #[put("/authorizations/{id}")]
 pub async fn refresh_auth(req: HttpRequest, state: web::Data<AppState>, conn: ConnectionInfo) -> Result<web::HttpResponse, error::Error> {
     let id: String = req.match_info().get("id").unwrap().parse().unwrap();
-    validator::uuid(&id, "授权id")?;
+    validator::uuid(&id, "Authorization id")?;
 
     let token = match req.headers().get("Authorization") {
         None => return Err(error::new(100403, "Authentication failure", 401)),
@@ -261,11 +261,11 @@ pub async fn refresh_auth(req: HttpRequest, state: web::Data<AppState>, conn: Co
     }))
 }
 
-// 删除授权
+// Delete authorization
 #[delete("/authorizations/{id}")]
 pub async fn delete_auth(req: HttpRequest, state: web::Data<AppState>, conn: ConnectionInfo) -> Result<web::HttpResponse, error::Error> {
     let id: String = req.match_info().get("id").unwrap().parse().unwrap();
-    validator::uuid(&id, "授权id")?;
+    validator::uuid(&id, "Authorization id")?;
 
     let client = client::get_client_info(&state, &req, &conn);
     
