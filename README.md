@@ -30,7 +30,7 @@ Port 8080 is enabled by default，accessible http://localhost:8080/hello test wh
 $ cargo make clean
 ```
 
-## 打包
+## Bale
 ```
 $ cargo make build
 ```
