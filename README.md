@@ -151,5 +151,5 @@ validator::not_none(absent_number, "numerical value")?;
 If you need to judge the input string as non-None and automatically convert Option to String，can be used `validator::required_str` function：
 
 ```
-let name = validator::required_str(name_param, "名称")?;
+let name = validator::required_str(name_param, "name")?;
 ```
