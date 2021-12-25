@@ -2,12 +2,12 @@
 A Rust RESTful API server with actix-web
 
 ## Install
-- Install[Rust](https://www.rust-lang.org/)
-- Install[Docker](https://www.docker.com/) (optional)
-- Install[Docker Compose](https://github.com/docker/compose/releases) (optional)
+- Install [Rust](https://www.rust-lang.org/)
+- Install [Docker](https://www.docker.com/) (optional)
+- Install [Docker Compose](https://github.com/docker/compose/releases) (optional)
 
 
-Install first[cargo-make](https://github.com/sagiegurari/cargo-make)，Can use cargo make command to start some scripts
+Install first [cargo-make](https://github.com/sagiegurari/cargo-make)，Can use cargo make command to start some scripts
 
 ```
 $ cargo install --no-default-features --force cargo-make
