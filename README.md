@@ -1,31 +1,31 @@
 # rust-actix-rest-api-boilerplate
 A Rust RESTful API server with actix-web
 
-## 安装
-- 安装[Rust](https://www.rust-lang.org/)
-- 安装[Docker](https://www.docker.com/) (可选)
-- 安装[Docker Compose](https://github.com/docker/compose/releases) (可选)
+## Install
+- Install[Rust](https://www.rust-lang.org/)
+- Install[Docker](https://www.docker.com/) (optional)
+- Install[Docker Compose](https://github.com/docker/compose/releases) (optional)
 
 
-首先安装[cargo-make](https://github.com/sagiegurari/cargo-make)，可以用cargo make命令启动一些脚本
+Install first[cargo-make](https://github.com/sagiegurari/cargo-make)，Can use cargo make command to start some scripts
 
 ```
 $ cargo install --no-default-features --force cargo-make
 ```
 
 ```
-$ git clone 本库地址
+$ git clone address of this library
 ```
 
-## 启动开发环境
+## Start the development environment
 ```
 $ cargo make dev
 ```
 
-默认启用8080端口，可通过 http://localhost:8080/hello 测试是否启动成功
+Port 8080 is enabled by default，accessible http://localhost:8080/hello test whether the startup is successful
 
 
-## 清理
+## Clean up
 ```
 $ cargo make clean
 ```
@@ -35,32 +35,32 @@ $ cargo make clean
 $ cargo make build
 ```
 
-## mac交叉编译linux
+## mac cross compile linux
 ```
 $ cargo make buildlinux
 ```
 
-## 启动本地开发环境数据库(Docker,可选)
+## Start the local development environment database (Docker, optional)
 ````
 $ docker-compose up
 ````
 
-通过docker-compose启动postgres和redis，postgres端口为5432, redis端口为6379。数据库可通过本地客户端工具连接进行操作和调试。
+Pass through docker-compose start up postgres and redis，postgres the port is 5432, redis the port is 6379. The database can be operated and debugged through the local client tool connection
 
-## 停止本地开发环境数据库(Docker, 可选)
+## Stop the local development environment database (Docker, optional)
 ````
 $ docker-compose down
 ````
 
-## 说明
+## Instruction
 
-简洁为主
+Conciseness
 
-### 关于web框架actix-web
+### About web frameworks actix-web
 
-[actix-web](https://actix.rs/)是rust下快速的异步web框架。底层异步库使用的[Tokio](https://tokio.rs/)，开发时注意使用异步的方式开发。
+[actix-web](https://actix.rs/)It is a fast asynchronous web framework under rust。Used by the underlying asynchronous library [Tokio](https://tokio.rs/)，Pay attention to the use of asynchronous development when developing。
 
-数据库连接池，redis连接池和配置文件的相关实例，在actix web启动的时候通过`app_data`传入actix。
+Database connection pool，redis examples of connection pools and configuration files，exist actix web pass at startup `app_data` Incoming actix。
 
 ```
 App::new()
@@ -73,9 +73,9 @@ App::new()
 ...
 ```
 
-### 配置
+### Configuration
 
-配置库选择[config](https://github.com/mehcode/config-rs)，配置文件为 `data/config/app.toml`，配置数据可通过`web::Data`获取：
+Configuration library selection [config](https://github.com/mehcode/config-rs)，The configuration file is `data/config/app.toml`，Configuration data can be passed `web::Data` obtain：
 
 ```
 pub async fn hello(state: web::Data<AppState>) -> Result<web::HttpResponse, error::Error> {
@@ -84,9 +84,9 @@ pub async fn hello(state: web::Data<AppState>) -> Result<web::HttpResponse, erro
 }
 ```
 
-### 日志
+### Log 
 
-日志库选择[slog](https://github.com/slog-rs/slog)，支持异步，配置了日志文件和屏幕双输出。日志文件为 `data/logs/app.log`，actix中可通过如下方式记录日志：
+Log library selection [slog](https://github.com/slog-rs/slog)，supports asynchronous, configured with log file and screen dual output. The log file is `data/logs/app.log`，actix Журнал можно вести следующими способами：
 
 ```
 pub async fn hello(state: web::Data<AppState>) -> Result<web::HttpResponse, error::Error> {
@@ -96,13 +96,13 @@ pub async fn hello(state: web::Data<AppState>) -> Result<web::HttpResponse, erro
 }
 ```
 
-### 数据库
+### Database
 
-数据库操作库选择的[sqlx](https://github.com/launchbadge/sqlx)，本例做了postgres的配置，可支持其他各种常用数据库。可通过`web::Data`获取数据库连接池。注意要使用异步方式开发。
+Database operation library selection [sqlx](https://github.com/launchbadge/sqlx)，In this example, postgres is configured to support various other commonly used databases. accessible `web::Data` Get the database connection pool. Pay attention to the use of asynchronous development/
 
 ### Redis
 
-Redis操作库选择的[redis](https://github.com/mitsuhiko/redis-rs)，支持异步方式，使用[mobc](https://github.com/importcjj/mobc)配置的连接池。可通过`web::Data`获取redis连接池。注意要使用异步方式开发。
+Redis operational library selection [redis](https://github.com/mitsuhiko/redis-rs)，support asynchronous mode, use [mobc](https://github.com/importcjj/mobc) The configured connection pool. accessible `web::Data` Get the redis connection pool. Pay attention to the use of asynchronous development。
 
 ```
 use redis::AsyncCommands;
@@ -116,39 +116,39 @@ pub async fn hello(state: web::Data<AppState>) -> Result<web::HttpResponse, erro
 
 ```
 
-### 错误格式
+### Wrong format
 
-采用JSON数据结构。
+use JSON data structure。
 
 ```
 {"errcode":100203,"errmsg":"Captcha not found"}
 ```
-(其他语言的后端接口我们也是统一返回类似的错误码，这样对于前端不用关心后端使用什么语言，使用统一的错误格式即可)
+(We also return similar error codes uniformly for the back-end interfaces of other languages, so that the front-end doesn’t need to care what language the back-end uses, just use a unified error format.)
 
-actix中可使用`src/lib/error`中定义的错误类型输出错误：
+actix available in `src/lib/error` the error type defined in the output error：
 
 ```
 use crate::lib::error;
 ...
 
-return Err(error::new(400001, "姓名不能为空", 422));
+return Err(error::new(400001, "name cannot be empty", 422));
 ...
 
 ```
 
-注：暂时使用422的错误码输出错误，在当前的actix版本，400错误会被默认自定义错误输出覆盖，待后续解决。
+注：Temporarily use the 422 error code to output the error. In the current Actix version, the 400 error will be covered by the default custom error output, which will be resolved later。
 
-### 输入验证
+### Input verification
 
-暂时没采用第三方库做输入验证，采用简单方式处理（沿用我其他语言脚手架的惯用方式），一些输入格式可通过 `src/lib/validator.rs` 中的正则判断，可在这里增加其他需要的验证。在actix中，通过?来验证和传递错误。
+For the time being, the third-party library is not used for input verification, and it is processed in a simple way (I follow my usual method of scaffolding in other languages). Some input formats can be judged by the regularity in `src/lib/validator.rs`, and other needs can be added here Verification. In actix, use? To verify and pass errors。
 
 ```
 validator::uuid(uuid_var, "uuid")?;
-validator::not_none(absent_number, "数值")?;
+validator::not_none(absent_number, "numerical value")?;
 ...
 ```
 
-如果需要对输入的字符串判断非None并将Option自动转换为String，可采用`validator::required_str`函数：
+If you need to judge the input string as non-None and automatically convert Option to String，can be used `validator::required_str` function：
 
 ```
 let name = validator::required_str(name_param, "名称")?;
